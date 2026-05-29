@@ -51,6 +51,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     var specialAnnouncementTimer by mutableStateOf(0f)
 
     var activeScore by mutableStateOf(0)
+    var gameTick by mutableStateOf(0)
     var isMatchFinished by mutableStateOf(false)
     var matchWinnerName by mutableStateOf("")
     var matchWinnerEmoji by mutableStateOf("")
@@ -156,6 +157,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 // 40 FPS target delay
+                gameTick++
                 delay(25)
             }
         }

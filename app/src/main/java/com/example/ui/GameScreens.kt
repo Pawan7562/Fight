@@ -41,6 +41,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -1231,6 +1233,26 @@ fun DailyRewardView(viewModel: GameViewModel) {
 fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
     val engine = viewModel.gameEngine
     val textMeasurer = rememberTextMeasurer()
+    val tick = viewModel.gameTick // Triggers optimized recomposition precisely on each engine tick
+
+    // Cache structure to reuse pre-measured TextLayoutResult and prevent on-the-fly measure overhead
+    val textLayoutCache = remember { mutableMapOf<String, TextLayoutResult>() }
+    if (textLayoutCache.size > 250) {
+        textLayoutCache.clear()
+    }
+
+    val getCachedResult = { text: String, fontSizeSp: Int, isBold: Boolean ->
+        val cacheKey = "${text}_${fontSizeSp}_${isBold}"
+        textLayoutCache.getOrPut(cacheKey) {
+            textMeasurer.measure(
+                text = AnnotatedString(text),
+                style = TextStyle(
+                    fontSize = fontSizeSp.sp,
+                    fontWeight = if (isBold) FontWeight.Black else FontWeight.Normal
+                )
+            )
+        }
+    }
 
     // Match details
     val currentMap = GameData.maps.firstOrNull { it.id == viewModel.selectedMapId } ?: GameData.maps[0]
@@ -1261,10 +1283,9 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
             engine.passiveItems.forEach { item ->
                 val drawX = item.x * scaleX
                 val drawY = item.y * scaleY
+                val layout = getCachedResult(item.emoji, 24, false)
                 drawText(
-                    textMeasurer = textMeasurer,
-                    text = item.emoji,
-                    style = TextStyle(fontSize = 24.sp),
+                    textLayoutResult = layout,
                     topLeft = Offset(drawX - 25f, drawY - 25f)
                 )
             }
@@ -1275,10 +1296,9 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
                 val drawY = p.y * scaleY
 
                 if (p.isDead) {
+                    val layout = getCachedResult("💀", 28, false)
                     drawText(
-                        textMeasurer = textMeasurer,
-                        text = "💀",
-                        style = TextStyle(fontSize = 28.sp),
+                        textLayoutResult = layout,
                         topLeft = Offset(drawX - 20f, drawY - 30f)
                     )
                 } else {
@@ -1318,10 +1338,9 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
 
                     // Slipper at hand end
                     val equippedSlipper = GameData.weapons.firstOrNull { it.id == p.preferredWeaponId } ?: GameData.weapons[0]
+                    val layout = getCachedResult(equippedSlipper.emoji, 16, false)
                     drawText(
-                        textMeasurer = textMeasurer,
-                        text = equippedSlipper.emoji,
-                        style = TextStyle(fontSize = 16.sp),
+                        textLayoutResult = layout,
                         topLeft = Offset(handEndX - 10f, handEndY - 10f)
                     )
 
@@ -1333,10 +1352,9 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
                         else -> p.emoji.take(2)
                     }
 
+                    val faceLayout = getCachedResult(faceText, 17, false)
                     drawText(
-                        textMeasurer = textMeasurer,
-                        text = faceText,
-                        style = TextStyle(fontSize = 17.sp),
+                        textLayoutResult = faceLayout,
                         topLeft = Offset(drawX - 16f, drawY - 42f * scaleY)
                     )
 
@@ -1346,10 +1364,10 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
                     }
 
                     // Floating text player name
+                    val nameLayout = getCachedResult(p.name, 10, true)
                     drawText(
-                        textMeasurer = textMeasurer,
-                        text = p.name,
-                        style = TextStyle(color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold),
+                        textLayoutResult = nameLayout,
+                        color = Color.White,
                         topLeft = Offset(drawX - 45f, drawY - 65f * scaleY)
                     )
 
@@ -1376,10 +1394,9 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
                 val drawX = proj.x * scaleX
                 val drawY = proj.y * scaleY
 
+                val layout = getCachedResult(proj.emoji, 24, false)
                 drawText(
-                    textMeasurer = textMeasurer,
-                    text = proj.emoji,
-                    style = TextStyle(fontSize = 24.sp),
+                    textLayoutResult = layout,
                     topLeft = Offset(drawX - 15f, drawY - 15f)
                 )
             }
@@ -1389,10 +1406,9 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
                 val drawX = pt.x * scaleX
                 val drawY = pt.y * scaleY
 
+                val layout = getCachedResult(pt.emoji, 16, false)
                 drawText(
-                    textMeasurer = textMeasurer,
-                    text = pt.emoji,
-                    style = TextStyle(fontSize = 16.sp),
+                    textLayoutResult = layout,
                     topLeft = Offset(drawX - 10f, drawY - 10f)
                 )
             }
@@ -1402,15 +1418,12 @@ fun GamePlayView(viewModel: GameViewModel, profile: UserProfile) {
                 val drawX = pop.x * scaleX
                 val drawY = pop.y * scaleY
 
-                val textStyle = TextStyle(
-                    color = Color(android.graphics.Color.parseColor(pop.colorHex)),
-                    fontSize = (15f * pop.scale).sp,
-                    fontWeight = FontWeight.Black
-                )
+                val sizeInt = (15f * pop.scale).roundToInt().coerceAtLeast(8)
+                val layout = getCachedResult(pop.text, sizeInt, true)
+                val popColor = Color(android.graphics.Color.parseColor(pop.colorHex))
                 drawText(
-                    textMeasurer = textMeasurer,
-                    text = pop.text,
-                    style = textStyle,
+                    textLayoutResult = layout,
+                    color = popColor,
                     topLeft = Offset(drawX - 50f, drawY - 15f)
                 )
             }
