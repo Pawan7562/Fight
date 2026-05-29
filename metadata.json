@@ -1,0 +1,6 @@
+{
+  "name": "Chappal Fight Arena",
+  "description": "Hilarious Indian-comedy themed slipper slinging brawler. Battle as Angry Mom, Hostel Boy, Dance Uncle, or Meme Grandpa and throw chappals to achieve victory!",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,50 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Comic Shockwave Starburst Background inside Foreground canvas -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M 54,22 L 59,38 L 74,30 L 66,45 L 82,45 L 69,54 L 80,66 L 65,65 L 70,80 L 58,70 L 54,86 L 50,70 L 38,80 L 43,65 L 28,66 L 39,54 L 26,45 L 42,45 L 34,30 L 49,38 Z" />
+
+    <!-- Blue Hawai Slipper Sole (rotated 25 degrees) -->
+    <path
+        android:fillColor="#1565C0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:pathData="M 46,32 C 43,26 38,28 32,36 C 26,44 24,54 28,66 C 32,78 40,84 46,80 C 52,76 58,68 56,56 C 54,44 50,38 46,32 Z" />
+
+    <!-- Inner Cushion Sole (lighter blue) -->
+    <path
+        android:fillColor="#1E88E5"
+        android:pathData="M 44,35 C 41,30 38,32 34,38 C 30,44 28,52 31,63 C 34,73 40,79 44,76 C 48,72 53,66 51,55 C 50,44 47,40 44,35 Z" />
+
+    <!-- Slipper Straps (Orange & High Contrast) -->
+    <!-- Left Strap -->
+    <path
+        android:strokeColor="#FF5722"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M 39,44 Q 35,50 32,58" />
+    <!-- Right Strap -->
+    <path
+        android:strokeColor="#FF5722"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M 39,44 Q 45,52 47,60" />
+
+    <!-- Central Strap Peg -->
+    <path
+        android:fillColor="#D84315"
+        android:pathData="M 39,40.5 C 41,40.5 42.5,42 42.5,44 C 42.5,46 41,47.5 39,47.5 C 37,47.5 35.5,46 35.5,44 C 35.5,42 37,40.5 39,40.5 Z" />
+
+    <!-- Little comical impact sweat drops -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 76,23 C 77.6,23 79,24.4 79,26 C 79,27.6 77.6,29 76,29 C 74.4,29 73,27.6 73,26 C 73,24.4 74.4,23 76,23 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 28,79 C 29.6,79 31,80.4 31,82 C 31,83.6 29.6,85 28,85 C 26.4,85 25,83.6 25,82 C 25,80.4 26.4,79 28,79 Z" />
+</vector>
